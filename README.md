@@ -24,16 +24,24 @@ Diabetes is a prevalent and preventable chronic disease. Large-scale survey data
 
 Data550_final/
 ├─ data/
-│ └─ diabetes_binary_health_indicators_BRFSS2015.csv
+│  ├─ diabetes_binary_health_indicators_BRFSS2015.csv
+│  ├─ clean_data.RData
+│  └─ clean_data.csv
 ├─ code/
-│ ├─ 01_data_clean.R # data import & cleaning
-│ ├─ 02_analysis.R # regression & ML modeling
-│ └─ 03_make_output.R # figures & tables
+│  ├─ 01_data_clean.R
+│  ├─ 02_analysis.R
+│  └─ 03_make_output.R
+├─ output/
+│  ├─ model_summary.txt        # logistic regression summary
+│  ├─ rf_accuracy.txt          # random forest accuracy
+│  ├─ roc_curve.png            # figure (later)
+│  └─ auc_table.csv            # (later)
 ├─ report/
-│ ├─ final_report.Rmd # main R Markdown
-│ └─ report.html # rendered output (built)
-├─ Makefile # one-command build
+│  ├─ final_report.Rmd
+│  └─ report.html
+├─ Makefile
 └─ README.md
+
 ```
 
 ## How to reproduce
