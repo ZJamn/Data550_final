@@ -4,7 +4,8 @@ report.html: code/01_data_clean.R code/02_analysis.R code/03_make_output.R repor
 	Rscript code/01_data_clean.R
 	Rscript code/02_analysis.R
 	Rscript code/03_make_output.R
-	Rscript -e "rmarkdown::render('report/final_report.Rmd', output_file = 'report.html')"
+	Rscript -e "rmarkdown::render('report/final_report.Rmd', output_file = 'final_report.html')"
 
 clean:
-	rm -f report/report.html
+	rm -f report/final_report.html
+
