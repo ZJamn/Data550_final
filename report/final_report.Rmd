@@ -6,7 +6,16 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+
+library(tidyverse)
+
+load("../data/clean_data.RData")
+dat <- read_csv("../data/clean_data.csv")
+
+
 ```
 
 ## Introduction
