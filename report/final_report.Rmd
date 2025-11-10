@@ -57,7 +57,7 @@ raw<- read_csv("../data/diabetes_binary_health_indicators_BRFSS2015.csv")
 # This serves as the core descriptive table and satisfies the rubric
 # requirement to "create some table" and "include text describing the table."
 
-dat$Diabetes_012 <- factor(dat$Diabetes_012,
+dat$Diabetes_binary <- factor(dat$Diabetes_012,
                            levels = c("No/gestational only","Prediabetes","Diabetes"))
 dat$PhysActivity <- if (!is.factor(dat$PhysActivity)) factor(dat$PhysActivity, levels = c(0,1), labels = c("No","Yes")) else dat$PhysActivity
 dat$HighBP       <- if (!is.factor(dat$HighBP))       factor(dat$HighBP,       levels = c(0,1), labels = c("No","Yes")) else dat$HighBP
@@ -65,8 +65,8 @@ dat$HighBP       <- if (!is.factor(dat$HighBP))       factor(dat$HighBP,       l
 # This step is for what:
 
 tbl_ei <- dat %>%
-  count(Diabetes_012, Education, Income, name = "Count") %>%
-  group_by(Diabetes_012) %>%
+  count(Diabetes_binary, Education, Income, name = "Count") %>%
+  group_by(Diabetes_binary) %>%
   mutate(Percent_in_group = round(100 * Count / sum(Count), 1)) %>%
   ungroup()
 
@@ -91,7 +91,7 @@ dat$AgeGrp <- factor(dat$Age, levels = 1:13, labels = age_labs)
 
 prev_age <- dat %>%
   filter(!is.na(AgeGrp)) %>%
-  mutate(diabetes_binary = as.integer(Diabetes_012 == "Diabetes")) %>%
+  mutate(diabetes_binary = as.integer(Diabetes_binary == "Diabetes")) %>%
   group_by(AgeGrp) %>%
   summarise(prevalence = mean(diabetes_binary, na.rm = TRUE), .groups = "drop")
 
@@ -115,7 +115,7 @@ Diabetes prevalence rises steadily with age, peaking in older groups, indicating
 # Results are reported as odds ratios with 95% confidence intervals.
 
 
-dat$diabetes_bin <- as.integer(dat$Diabetes_012 == "Diabetes")  # 1 = Diabetes, 0 = otherwise
+dat$diabetes_bin <- as.integer(dat$Diabetes_binary == "Diabetes")  # 1 = Diabetes, 0 = otherwise
 
 
 fit <- glm(diabetes_bin ~ Age + BMI + PhysActivity + HighBP,
