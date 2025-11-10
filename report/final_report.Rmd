@@ -6,16 +6,27 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
-
-
 library(tidyverse)
+library(knitr)
 
 load("../data/clean_data.RData")
 dat <- read_csv("../data/clean_data.csv")
 
-
+# --- Normalize column types ---
+dat <- dat %>%
+  mutate(
+    Diabetes_binary = if (is.numeric(Diabetes_binary))
+      factor(Diabetes_binary, levels = c(0,1),
+             labels = c("No","Diabetes"))
+    else Diabetes_binary,
+    PhysActivity = if (is.numeric(PhysActivity))
+      factor(PhysActivity, levels = c(0,1), labels = c("No","Yes"))
+    else PhysActivity,
+    HighBP = if (is.numeric(HighBP))
+      factor(HighBP, levels = c(0,1), labels = c("No","Yes"))
+    else HighBP
+  )
 ```
 
 ## Introduction
@@ -57,20 +68,15 @@ raw<- read_csv("../data/diabetes_binary_health_indicators_BRFSS2015.csv")
 # This serves as the core descriptive table and satisfies the rubric
 # requirement to "create some table" and "include text describing the table."
 
-dat$Diabetes_binary <- factor(dat$Diabetes_012,
-                           levels = c("No/gestational only","Prediabetes","Diabetes"))
-dat$PhysActivity <- if (!is.factor(dat$PhysActivity)) factor(dat$PhysActivity, levels = c(0,1), labels = c("No","Yes")) else dat$PhysActivity
-dat$HighBP       <- if (!is.factor(dat$HighBP))       factor(dat$HighBP,       levels = c(0,1), labels = c("No","Yes")) else dat$HighBP
-
-# This step is for what:
-
 tbl_ei <- dat %>%
-  count(Diabetes_binary, Education, Income, name = "Count") %>%
-  group_by(Diabetes_binary) %>%
-  mutate(Percent_in_group = round(100 * Count / sum(Count), 1)) %>%
-  ungroup()
+count(Diabetes_binary, Education, Income, name = "Count") %>%
+group_by(Diabetes_binary) %>%
+mutate(Percent_in_group = round(100 * Count / sum(Count), 1)) %>%
+ungroup()
 
 kable(tbl_ei, caption = "Table 1. Education × Income × Diabetes (counts and % within Diabetes group)")
+
+
 
 ```
 Table 1 shows how education and income strata distribute within each diabetes category. Diabetes groups tend to concentrate in lower education/income bands compared with the no-diabetes group, suggesting socioeconomic gradients in diabetes burden.
@@ -86,23 +92,24 @@ Table 1 shows how education and income strata distribute within each diabetes ca
 
 
 age_labs <- c("18–24","25–29","30–34","35–39","40–44","45–49",
-              "50–54","55–59","60–64","65–69","70–74","75–79","80+")
+"50–54","55–59","60–64","65–69","70–74","75–79","80+")
+
 dat$AgeGrp <- factor(dat$Age, levels = 1:13, labels = age_labs)
 
 prev_age <- dat %>%
-  filter(!is.na(AgeGrp)) %>%
-  mutate(diabetes_binary = as.integer(Diabetes_binary == "Diabetes")) %>%
-  group_by(AgeGrp) %>%
-  summarise(prevalence = mean(diabetes_binary, na.rm = TRUE), .groups = "drop")
+filter(!is.na(AgeGrp)) %>%
+mutate(diabetes_binary = as.integer(Diabetes_binary == "Diabetes")) %>%
+group_by(AgeGrp) %>%
+summarise(prevalence = mean(diabetes_binary, na.rm = TRUE), .groups = "drop")
 
 ggplot(prev_age, aes(x = AgeGrp, y = prevalence)) +
-  geom_col() +
-  geom_text(aes(label = scales::percent(prevalence, accuracy = 0.1)), vjust = -0.25) +
-  scale_y_continuous(limits = c(0, 1), labels = scales::percent) +  # 用 scale_y_continuous 更稳
-  labs(title = "Figure 1. Diabetes prevalence by age group",
-       x = "Age group", y = "Prevalence")
+geom_col(fill = "steelblue") +
+geom_text(aes(label = scales::percent(prevalence, accuracy = 0.1)), vjust = -0.25) +
+scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
+labs(title = "Figure 1. Diabetes prevalence by age group",
+x = "Age group", y = "Prevalence")
 
-summary(prev_age)
+
 ```
 Diabetes prevalence rises steadily with age, peaking in older groups, indicating a strong age gradient in diabetes risk.
 
@@ -113,27 +120,66 @@ Diabetes prevalence rises steadily with age, peaking in older groups, indicating
 # Fit an interpretable binary logistic regression model to estimate the
 # association of Age, BMI, Physical Activity, and HighBP with diabetes (yes/no).
 # Results are reported as odds ratios with 95% confidence intervals.
+## Logistic regression — Diabetes ~ Age + BMI + PhysActivity + HighBP
 
+# 1) Normalize predictors to 0/1 from any of {0,1,"0","1","No","Yes"}
+dat <- dat %>%
+  mutate(
+    PhysActivity = case_when(
+      PhysActivity %in% c(1, "1", "Yes", "YES") ~ 1L,
+      PhysActivity %in% c(0, "0", "No",  "NO")  ~ 0L,
+      TRUE ~ NA_integer_
+    ),
+    HighBP = case_when(
+      HighBP %in% c(1, "1", "Yes", "YES") ~ 1L,
+      HighBP %in% c(0, "0", "No",  "NO")  ~ 0L,
+      TRUE ~ NA_integer_
+    )
+  )
 
-dat$diabetes_bin <- as.integer(dat$Diabetes_binary == "Diabetes")  # 1 = Diabetes, 0 = otherwise
+# 2) Robust outcome construction (works for either Diabetes_binary or Diabetes_012)
+diab_bin <- if ("Diabetes_binary" %in% names(dat)) {
+  ifelse(dat$Diabetes_binary %in% c(1, "1", "Yes", "YES", "Diabetes"), 1L,
+         ifelse(dat$Diabetes_binary %in% c(0, "0", "No", "NO"), 0L, NA_integer_))
+} else if ("Diabetes_012" %in% names(dat)) {
+  ifelse(dat$Diabetes_012 %in% c(2, "2", "Diabetes"), 1L,
+         ifelse(dat$Diabetes_012 %in% c(0, "0", "No/gestational only",
+                                        "No diabetes"), 0L,
+                NA_integer_))
+} else {
+  stop("No diabetes outcome found: need Diabetes_binary or Diabetes_012")
+}
 
+# 3) Analysis frame with complete cases only
+mod_dat <- dat %>%
+  mutate(diabetes_bin = diab_bin) %>%
+  filter(!is.na(diabetes_bin),
+         !is.na(Age), !is.na(BMI),
+         !is.na(PhysActivity), !is.na(HighBP))
 
-fit <- glm(diabetes_bin ~ Age + BMI + PhysActivity + HighBP,
-           data = dat, family = binomial())
+if (nrow(mod_dat) == 0L) stop("No rows remain after cleaning; check mappings above.")
 
+# 4) Fit model (binary predictors as factors)
+fit <- glm(diabetes_bin ~ Age + BMI + factor(PhysActivity) + factor(HighBP),
+           data = mod_dat, family = binomial())
+
+# 5) Report odds ratios with 95% CIs
 coefs <- summary(fit)$coefficients
 OR    <- exp(coefs[, "Estimate"])
 SE    <- coefs[, "Std. Error"]
-lower <- exp(coefs[, "Estimate"] - 1.96*SE)
-upper <- exp(coefs[, "Estimate"] + 1.96*SE)
-out   <- data.frame(Variable = rownames(coefs),
-                    OR = round(OR, 3),
-                    CI_lower = round(lower, 3),
-                    CI_upper = round(upper, 3),
-                    p_value = signif(coefs[, "Pr(>|z|)"], 3),
-                    row.names = NULL)
+lower <- exp(coefs[, "Estimate"] - 1.96 * SE)
+upper <- exp(coefs[, "Estimate"] + 1.96 * SE)
 
-kable(out, caption = "Logistic regression: Odds ratios for Diabetes (vs No/Prediabetes)")
+out <- data.frame(
+  Variable = rownames(coefs),
+  OR = round(OR, 3),
+  CI_lower = round(lower, 3),
+  CI_upper = round(upper, 3),
+  p_value = signif(coefs[, "Pr(>|z|)"], 3),
+  row.names = NULL
+)
+
+kable(out, caption = "Logistic regression: Odds ratios for Diabetes (vs No)")
 
 ```
 Higher Age and BMI are associated with higher odds of diabetes. Reporting “PhysActivity = Yes” is associated with lower odds, while “HighBP = Yes” is associated with higher odds, consistent with known cardiometabolic risk patterns. Estimates are presented as odds ratios with 95% CIs.
