@@ -15,8 +15,8 @@ Diabetes is a prevalent and preventable chronic disease. Large-scale survey data
 
 ## Methods (overview)
 1. **Data cleaning**: import, variable recoding, handling missing values.
-2. **Modeling**: logistic regression for inference; a simple ML baseline (e.g., random forest) for prediction.
-3. **Outputs**: one summary **table** of key coefficients/metrics and at least one **figure** (e.g., diabetes prevalence by BMI category or ROC curve).
+2. **Modeling**: logistic regression for inference。
+3. **Outputs**: one summary **table** of key coefficients/metrics and at least one **figure**.
 4. **Reproducibility**: a `Makefile` builds the entire report from scripts and R Markdown.
 
 ## Repository structure
