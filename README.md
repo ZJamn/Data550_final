@@ -32,10 +32,8 @@ Data550_final/
 │  ├─ 02_analysis.R
 │  └─ 03_make_output.R
 ├─ output/
-│  ├─ model_summary.txt        # logistic regression summary
-│  ├─ rf_accuracy.txt          # random forest accuracy
-│  ├─ roc_curve.png            # figure (later)
-│  └─ auc_table.csv            # (later)
+│  ├─ model_summary.txt        
+│  └─diabetes_by_age.png
 ├─ report/
 │  ├─ final_report.Rmd
 │  └─ final_report.html
