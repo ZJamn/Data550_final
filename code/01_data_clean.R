@@ -1,6 +1,7 @@
 # 01_data_clean.R — clean and subset dataset
-setwd("~/Desktop/Data550_final")
-cat("📁 Working directory set to:", getwd(), "\n")
+library(here)
+cat("📁 Working directory set to:", here(), "\n")
+
 
 library(dplyr)
 
