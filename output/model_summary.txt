@@ -1,0 +1,23 @@
+
+Call:
+glm(formula = diabetes_bin ~ Age + BMI + factor(PhysActivity) + 
+    factor(HighBP), family = binomial(), data = dat)
+
+Coefficients:
+                       Estimate Std. Error z value Pr(>|z|)    
+(Intercept)           -5.500453   0.204839 -26.853  < 2e-16 ***
+Age                    0.144043   0.012498  11.525  < 2e-16 ***
+BMI                    0.068840   0.004419  15.580  < 2e-16 ***
+factor(PhysActivity)1 -0.433960   0.065797  -6.595 4.24e-11 ***
+factor(HighBP)1        1.233099   0.070858  17.402  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 8081.1  on 9999  degrees of freedom
+Residual deviance: 6921.7  on 9995  degrees of freedom
+AIC: 6931.7
+
+Number of Fisher Scoring iterations: 5
+

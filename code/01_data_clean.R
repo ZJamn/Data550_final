@@ -1,30 +1,32 @@
-# 01_data_clean.R
-# Step 1: Load and clean the diabetes dataset
-
-# --- Force working directory to project root ---
+# 01_data_clean.R — clean and subset dataset
 setwd("~/Desktop/Data550_final")
 cat("📁 Working directory set to:", getwd(), "\n")
 
-# --- Load necessary package ---
 library(dplyr)
 
-# --- Read in data ---
+
 data <- read.csv("data/diabetes_binary_health_indicators_BRFSS2015.csv")
 
-# --- Basic cleaning: remove NAs (if any) ---
+
 clean_data <- na.omit(data)
 
-# --- Optional: create a smaller sample for faster processing ---
+
 set.seed(123)
 clean_data <- clean_data %>% sample_n(min(10000, nrow(clean_data)))
 
-# --- Save cleaned dataset to /data folder ---
-save_path <- file.path("data", "clean_data.RData")
-save(clean_data, file = save_path)
-cat("✅ Data cleaning complete. Saved cleaned data to:", normalizePath(save_path), "\n")
 
-# Save also as CSV file for viewing
+if ("Diabetes_binary" %in% names(clean_data)) {
+  clean_data$Diabetes_binary <- factor(clean_data$Diabetes_binary,
+                                       levels = c(0, 1),
+                                       labels = c("No", "Diabetes"))
+}
+
+clean_data$PhysActivity <- factor(clean_data$PhysActivity, levels = c(0,1), labels = c("No","Yes"))
+clean_data$HighBP       <- factor(clean_data$HighBP,       levels = c(0,1), labels = c("No","Yes"))
+
+
+save(clean_data, file = "data/clean_data.RData")
 write.csv(clean_data, "data/clean_data.csv", row.names = FALSE)
-cat("✅ Cleaned CSV saved to: data/clean_data.csv\n")
+cat("✅ Data cleaning complete. Saved to data/clean_data.csv\n")
 
 

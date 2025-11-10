@@ -90,7 +90,6 @@ Table 1 shows how education and income strata distribute within each diabetes ca
 # This satisfies the rubric requirement to "create some figure" and
 # "include text describing the figure."
 
-
 age_labs <- c("18–24","25–29","30–34","35–39","40–44","45–49",
 "50–54","55–59","60–64","65–69","70–74","75–79","80+")
 
@@ -108,7 +107,6 @@ geom_text(aes(label = scales::percent(prevalence, accuracy = 0.1)), vjust = -0.2
 scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
 labs(title = "Figure 1. Diabetes prevalence by age group",
 x = "Age group", y = "Prevalence")
-
 
 ```
 Diabetes prevalence rises steadily with age, peaking in older groups, indicating a strong age gradient in diabetes risk.
@@ -180,6 +178,5 @@ out <- data.frame(
 )
 
 kable(out, caption = "Logistic regression: Odds ratios for Diabetes (vs No)")
-
 ```
 Higher Age and BMI are associated with higher odds of diabetes. Reporting “PhysActivity = Yes” is associated with lower odds, while “HighBP = Yes” is associated with higher odds, consistent with known cardiometabolic risk patterns. Estimates are presented as odds ratios with 95% CIs.

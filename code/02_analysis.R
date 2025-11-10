@@ -1,28 +1,27 @@
-# 02_analysis.R
-# Step 2: Model the relationship between predictors and diabetes status
-
+# --- Logistic Regression Model ---
 library(dplyr)
-library(ggplot2)
+load("data/clean_data.RData")
 
-# ---- Load cleaned data ----
-clean_data <- read.csv("data/clean_data.csv")
-cat("✅ Cleaned data loaded successfully.\n")
+dat <- clean_data %>%
+  mutate(
+    PhysActivity = case_when(
+      PhysActivity %in% c(1, "1", "Yes", "YES") ~ 1L,
+      PhysActivity %in% c(0, "0", "No", "NO")  ~ 0L,
+      TRUE ~ NA_integer_
+    ),
+    HighBP = case_when(
+      HighBP %in% c(1, "1", "Yes", "YES") ~ 1L,
+      HighBP %in% c(0, "0", "No", "NO")  ~ 0L,
+      TRUE ~ NA_integer_
+    )
+  )
 
-# ---- Define outcome and predictors ----
-clean_data <- clean_data %>%
-  mutate(Diabetes_binary = as.factor(Diabetes_binary))
+dat$diabetes_bin <- ifelse(dat$Diabetes_binary %in% c(1, "1", "Yes", "Diabetes"), 1L, 0L)
 
-# ---- Logistic Regression ----
-logit_model <- glm(Diabetes_binary ~ Age + BMI + PhysActivity + HighBP,
-                   data = clean_data, family = binomial())
+fit <- glm(diabetes_bin ~ Age + BMI + factor(PhysActivity) + factor(HighBP),
+           data = dat, family = binomial())
 
-summary(logit_model)
-
-# Save model summary
-sink("output/model_summary.txt")
-cat("=== Logistic Regression Model ===\n")
-print(summary(logit_model))
-sink()
-
+summary_text <- capture.output(summary(fit))
+writeLines(summary_text, "output/model_summary.txt")
 cat("✅ Model summary saved to output/model_summary.txt\n")
 
