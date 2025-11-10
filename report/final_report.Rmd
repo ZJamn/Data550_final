@@ -35,7 +35,8 @@ This step is essential because it converts the raw .csv file into an R data fram
 
 library(readr)
 
-raw<- read_csv("diabetes_012_health_indicators_BRFSS2015.csv")
+raw<- read_csv("../data/diabetes_binary_health_indicators_BRFSS2015.csv")
+
 ```
 
 
