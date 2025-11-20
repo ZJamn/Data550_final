@@ -6,7 +6,8 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 library(tidyverse)
 library(knitr)
 
@@ -30,7 +31,6 @@ dat <- dat %>%
 ```
 
 ## Introduction
-
 The Diabetes Health Indicators Dataset is a cleaned version of the 2015 CDC BRFSS survey, made publicly available on Kaggle
 (https://www.kaggle.com/datasets/alexteboul/diabetes-health-indicators-dataset
 ).
@@ -38,20 +38,15 @@ It contains >250k survey responses and 22 variables spanning demographics (Age, 
 (Smoker, PhysActivity, Fruits/Veggies intake, HvyAlcoholConsump), and chronic conditions (HighBP, HighChol, Stroke, HeartDiseaseorAttack).
 The outcome Diabetes_012 has three classes (0=no diabetes or only during pregnancy; 1=prediabetes; 2=diabetes).
 
-Objective.
-We aim to (i))provide descriptive summaries of key indicators across diabetes status and (ii) visualize diabetes prevalence across BMI categories.
-This report fulfills the assignment rubric by including an introduction, code to load data, ≥1 table with text description, and ≥1 figure with text description.
+
+## Objective
+This project aims to summarize key health indicators related to diabetes and explore how diabetes prevalence varies across demographic and behavioral factors. Specifically, we (i) provide descriptive summaries of indicators across diabetes status, (ii) visualize diabetes prevalence across age and BMI categories, and (iii) fit a simple logistic regression model to examine how age, BMI, physical activity, and high blood pressure relate to diabetes status.
+
+
+```{r}
 
 ## Data: load & basic cleaning
-install if using R icloud if not just ignore
-```{r}
-#install.packages("readr")
-#install.packages("dplyr")
-#install.packages("knitr")
-```
-
-This step is essential because it converts the raw .csv file into an R data frame object (dat) so that I can clean, transform, and analyze it in later steps.
-```{r}
+#This step is essential because it converts the raw .csv file into an R data frame object (dat) so that I can clean, transform, and analyze it in later steps.
 
 library(readr)
 
@@ -60,7 +55,7 @@ raw<- read_csv("../data/diabetes_binary_health_indicators_BRFSS2015.csv")
 ```
 
 
-#Table 1 — Education × Income × Diabetes
+### Table 1 — Education × Income × Diabetes
 ```{r}
 # This step is for what:
 # Create a three-way cross-tabulation (Education × Income × Diabetes),
@@ -79,10 +74,11 @@ kable(tbl_ei, caption = "Table 1. Education × Income × Diabetes (counts and % 
 
 
 ```
-Table 1 shows how education and income strata distribute within each diabetes category. Diabetes groups tend to concentrate in lower education/income bands compared with the no-diabetes group, suggesting socioeconomic gradients in diabetes burden.
+
+**Table 1 shows how education and income strata distribute within each diabetes category. Diabetes groups tend to concentrate in lower education/income bands compared with the no-diabetes group, suggesting socioeconomic gradients in diabetes burden.**
 
 
-#Figure 1 — Diabetes prevalence by Age group
+### Figure 1 — Diabetes prevalence by Age group
 ```{r}
 # This step is for what:
 # Map the BRFSS Age codes to readable age groups, compute the proportion
@@ -109,10 +105,12 @@ labs(title = "Figure 1. Diabetes prevalence by age group",
 x = "Age group", y = "Prevalence")
 
 ```
-Diabetes prevalence rises steadily with age, peaking in older groups, indicating a strong age gradient in diabetes risk.
+
+**The plot shows a clear age gradient in diabetes prevalence. Younger adults (under 45) have very low rates, generally below 5%. Prevalence begins to climb steadily starting around age 45–49 and increases sharply in older age groups, reaching above 20% after age 65. This pattern suggests that diabetes risk rises consistently with age, which aligns with known epidemiologic patterns for type II diabetes.**
 
 
-#Logistic regression — Diabetes ~ Age + BMI + PhysActivity + HighBP
+
+### Logistic regression — Diabetes ~ Age + BMI + PhysActivity + HighBP
 ```{r}
 # This step is for what:
 # Fit an interpretable binary logistic regression model to estimate the
@@ -179,4 +177,5 @@ out <- data.frame(
 
 kable(out, caption = "Logistic regression: Odds ratios for Diabetes (vs No)")
 ```
-Higher Age and BMI are associated with higher odds of diabetes. Reporting “PhysActivity = Yes” is associated with lower odds, while “HighBP = Yes” is associated with higher odds, consistent with known cardiometabolic risk patterns. Estimates are presented as odds ratios with 95% CIs.
+
+**Higher Age and BMI are associated with higher odds of diabetes. Reporting “PhysActivity = Yes” is associated with lower odds, while “HighBP = Yes” is associated with higher odds, consistent with known cardiometabolic risk patterns. Estimates are presented as odds ratios with 95% CIs.**
