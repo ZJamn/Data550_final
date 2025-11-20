@@ -23,49 +23,49 @@ Diabetes is a prevalent and preventable chronic disease. Large-scale survey data
 ```
 
 Data550_final/
-├─ data/
-│  ├─ diabetes_binary_health_indicators_BRFSS2015.csv
-│  ├─ clean_data.RData
-│  └─ clean_data.csv
-├─ code/
-│  ├─ 01_data_clean.R
-│  ├─ 02_analysis.R
-│  └─ 03_make_output.R
-├─ output/
-│  ├─ model_summary.txt        
-│  └─diabetes_by_age.png
-├─ report/
-│  ├─ final_report.Rmd
-│  └─ final_report.html
-├─ Makefile
-└─ README.md
+├── data/
+│   ├── diabetes_binary_health_indicators_BRFSS2015.csv
+│   ├── clean_data.RData
+│   └── clean_data.csv
+├── code/
+│   ├── 01_data_clean.R
+│   ├── 02_analysis.R
+│   └── 03_make_output.R
+├── output/
+│   ├── model_summary.txt
+│   └── diabetes_by_age.png
+├── report/
+│   ├── final_report.Rmd
+│   └── final_report.html
+├── renv/
+│   ├── activate.R
+│   ├── settings.json
+│   └── (other renv files)
+├── renv.lock
+├── Makefile
+└── README.md
 
 ```
 
 ## How to reproduce
 ```bash
-# clone and enter
+1. clone and enter
 git clone git@github.com:ZJamn/Data550_final.git
 cd Data550_final
 
-# build the final report (creates report/report.html)
+
+2. Restore the R environment (renv)
+make install
+
+3. Build the final report (creates report/report.html)
 make report.html
 
-Key components 
-
-Required table: generated in code/03_make_output.R
-
-Required figure: generated in code/03_make_output.R
-
-Final report: report/final_report.Rmd (rendered to report/report.html)
-
-Build rule: see Makefile
-
-Author
-
-Jiamin Zhao (Rollins School of Public Health, Emory University)
-Email: jiamin.zhao@emory.edu
- • GitHub: ZJamn
-
+Key components:
+- Required table: generated in code/03_make_output.R  
+- Required figure: generated in code/03_make_output.R  
+- Final report source: report/final_report.Rmd  
+- Rendered output: report/final_report.html  
+- Build rules: see Makefile  
+```
 
 
