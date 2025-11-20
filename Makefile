@@ -1,4 +1,6 @@
 # Makefile for DATA 550 Final Project
+install:
+	Rscript -e "renv::restore()"
 
 report.html: code/01_data_clean.R code/02_analysis.R code/03_make_output.R report/final_report.Rmd data/diabetes_binary_health_indicators_BRFSS2015.csv
 	Rscript code/01_data_clean.R
