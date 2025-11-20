@@ -39,8 +39,7 @@ Data550_final/
 │   └── final_report.html
 ├── renv/
 │   ├── activate.R
-│   ├── settings.json
-│   └── (other renv files)
+│   └── settings.json
 ├── renv.lock
 ├── Makefile
 └── README.md
