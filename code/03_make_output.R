@@ -1,6 +1,7 @@
 # 03_make_output.R
 # Generate Figure 1: Diabetes prevalence by age group
 
+
 library(ggplot2)
 library(dplyr)
 library(scales)

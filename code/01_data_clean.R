@@ -1,20 +1,15 @@
 # 01_data_clean.R — clean and subset dataset
+
 library(here)
-cat("📁 Working directory set to:", here(), "\n")
-
-
 library(dplyr)
 
-
-data <- read.csv("data/diabetes_binary_health_indicators_BRFSS2015.csv")
-
+csv_path <- here("data", "diabetes_binary_health_indicators_BRFSS2015.csv")
+stopifnot(file.exists(csv_path))  
+data <- read.csv(csv_path)
 
 clean_data <- na.omit(data)
-
-
 set.seed(123)
 clean_data <- clean_data %>% sample_n(min(10000, nrow(clean_data)))
-
 
 if ("Diabetes_binary" %in% names(clean_data)) {
   clean_data$Diabetes_binary <- factor(clean_data$Diabetes_binary,

@@ -65,6 +65,15 @@ Key components:
 - Final report source: report/final_report.Rmd  
 - Rendered output: report/final_report.html  
 - Build rules: see Makefile  
+
+
+OR 
+make docker-report
+
+docker build -t zjamn/data550_final .
+mkdir -p report
+docker run --rm -v "$PWD"/report:/project/report zjamn/data550_final
+
 ```
 
 
